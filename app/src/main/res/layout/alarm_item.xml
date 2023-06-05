@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width = "150dp"
+    android:layout_height = "150dp"
+    android:layout_centerInParent = "true"
+    android:foregroundGravity = "center"
+    app:cardElevation = "16dp"
+    app:cardCornerRadius = "160dp"
+    android:layout_margin="14dp">
+
+    <TextView
+        android:id="@+id/selectedTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|top"
+        android:layout_marginTop="24dp"
+        android:gravity="top"
+        android:text="8:45"
+        android:textSize="20sp" />
+    <TextView
+        android:id="@+id/differenceTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="ring ing "
+        android:visibility="invisible"
+        android:textSize="18sp" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/alarmSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:checked="false" />
+
+</androidx.cardview.widget.CardView>

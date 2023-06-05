@@ -2,14 +2,24 @@ package com.example.alarmmanager
 
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.content.AbstractThreadedSyncAdapter
 import android.content.Intent
 import android.icu.util.Calendar
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.alarmmanager.adapter.AlarmAdapter
+import com.example.alarmmanager.database.AlarmDatabase
 import com.example.alarmmanager.databinding.ActivityMainBinding
+import com.example.alarmmanager.model.Alarm
 import com.example.alarmmanager.service.AlarmReceiver
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
@@ -20,6 +30,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var calendar : Calendar
     private lateinit var alarmManager: AlarmManager
     private lateinit var pendingIntent: PendingIntent
+    private lateinit var viewModel: MainViewModel
+    private lateinit var viewModelFactory: AlarmFactory
+    private lateinit var adapter: AlarmAdapter
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,21 +40,26 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.selectedTime.setOnClickListener {
-            showTimePicker()
-        }
+        val application = requireNotNull(this).application
+        val dao = AlarmDatabase.getInstance(application).alarmDao
+        viewModelFactory = AlarmFactory(dao)
+        viewModel = ViewModelProvider(this,viewModelFactory)[MainViewModel::class.java]
 
-        binding.alarmSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked){
-                setAlarm()
-            }else{
-                cancelAlarm()
+        binding.recyclerView.layoutManager = GridLayoutManager(application,2)
+        viewModel.alarms.observe(this, Observer {
+            it.let{
+                adapter = AlarmAdapter(this,it)
+                binding.recyclerView.adapter = adapter
             }
-        }
+        })
+
+//        binding.selectedTime.setOnClickListener {
+//            showTimePicker()
+//        }
 
     }
 
-    private fun cancelAlarm() {
+     fun cancelAlarm() {
         alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
         val intent = Intent(this , AlarmReceiver::class.java)
 
@@ -54,7 +72,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    private fun setAlarm() {
+     fun setAlarm() {
         alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
         val intent = Intent(this , AlarmReceiver::class.java)
 
@@ -87,12 +105,12 @@ class MainActivity : AppCompatActivity() {
         }
         val timeDifference = "Ring in ${hourDifference} h $minuteDifference minutes"
         Toast.makeText(this,timeDifference,Toast.LENGTH_SHORT).show()
-
+        adapter.diffTime = timeDifference
 
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    private fun showTimePicker() {
+      fun showTimePicker(alarm: Alarm? = null) {
         picker = MaterialTimePicker.Builder()
             .setTimeFormat(TimeFormat.CLOCK_12H)
             .setHour(12)
@@ -101,17 +119,34 @@ class MainActivity : AppCompatActivity() {
 
         picker.show(supportFragmentManager,"AlarmManager")
 
+
+
         picker.addOnPositiveButtonClickListener{
             if (picker.hour > 12){
 
-                binding.selectedTime.text =
-                    String.format("%02d",picker.hour - 12) + ":" + String.format("%02d" , picker.minute) + "PM"
-
+                if (alarm != null){
+                    alarm.hour = picker.hour - 12
+                    alarm.minute = picker.minute
+                    alarm.state = "PM"
+                    alarm.checked = false
+                    viewModel.update(alarm)
+                }else {
+                    val newAlarm = Alarm(hour = picker.hour - 12, minute = picker.minute, state = "PM", checked = false)
+                    viewModel.insert(newAlarm)
+                }
             }else{
-                binding.selectedTime.text =
-                    String.format("%02d",picker.hour ) + ":" + String.format("%02d" , picker.minute) + "AM"
-            }
 
+                if (alarm != null){
+                    alarm.hour = picker.hour
+                    alarm.minute = picker.minute
+                    alarm.state = "AM"
+                    alarm.checked = false
+                    viewModel.update(alarm)
+                }else {
+                    val newAlarm = Alarm(hour = picker.hour, minute = picker.minute, state = "AM", checked = false )
+                    viewModel.insert(newAlarm)
+                }
+            }
             calendar = Calendar.getInstance()
             calendar[Calendar.HOUR_OF_DAY] = picker.hour
             calendar[Calendar.MINUTE] = picker.minute
@@ -119,5 +154,22 @@ class MainActivity : AppCompatActivity() {
             calendar[Calendar.MILLISECOND] = 0
 
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater;
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.insertBtnMenu -> {
+                showTimePicker()
+
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
