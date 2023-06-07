@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-     fun setAlarm() {
+     fun setAlarm(alarm: Alarm? = null) {
         alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
         val intent = Intent(this , AlarmReceiver::class.java)
 
@@ -81,8 +81,15 @@ class MainActivity : AppCompatActivity() {
             intent,
             PendingIntent.FLAG_IMMUTABLE)
 
+        var timeMillis : Long
+        if (alarm != null){
+            timeMillis = alarm.timeInMillis
+        }else{
+            timeMillis = calendar.timeInMillis
+        }
+
         alarmManager.set(
-            AlarmManager.RTC_WAKEUP,calendar.timeInMillis,
+            AlarmManager.RTC_WAKEUP,timeMillis,
             pendingIntent
         )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -95,17 +102,19 @@ class MainActivity : AppCompatActivity() {
 
         val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
         val currentMinute = Calendar.getInstance().get(Calendar.MINUTE)
-        var hourDifference = picker.hour - currentHour
+        var hourDifference = if (alarm != null) alarm.hour - currentHour else picker.hour - currentHour
         if (hourDifference < 0) {
             hourDifference += 24
         }
-        var minuteDifference = picker.minute - currentMinute
+
+        var minuteDifference = if (alarm != null) alarm.minute - currentMinute else picker.minute - currentMinute
         if (minuteDifference < 0) {
             minuteDifference += 60
         }
-        val timeDifference = "Ring in ${hourDifference} h $minuteDifference minutes"
+        val timeDifference = "Ring in $hourDifference h $minuteDifference minutes"
         Toast.makeText(this,timeDifference,Toast.LENGTH_SHORT).show()
         adapter.diffTime = timeDifference
+
 
     }
 
@@ -119,39 +128,38 @@ class MainActivity : AppCompatActivity() {
 
         picker.show(supportFragmentManager,"AlarmManager")
 
-
-
+        var hour : Int
+        var state : String
         picker.addOnPositiveButtonClickListener{
             if (picker.hour > 12){
 
-                if (alarm != null){
-                    alarm.hour = picker.hour - 12
-                    alarm.minute = picker.minute
-                    alarm.state = "PM"
-                    alarm.checked = false
-                    viewModel.update(alarm)
-                }else {
-                    val newAlarm = Alarm(hour = picker.hour - 12, minute = picker.minute, state = "PM", checked = false)
-                    viewModel.insert(newAlarm)
-                }
-            }else{
+                hour = picker.hour - 12
+                state = "PM"
 
-                if (alarm != null){
-                    alarm.hour = picker.hour
-                    alarm.minute = picker.minute
-                    alarm.state = "AM"
-                    alarm.checked = false
-                    viewModel.update(alarm)
-                }else {
-                    val newAlarm = Alarm(hour = picker.hour, minute = picker.minute, state = "AM", checked = false )
-                    viewModel.insert(newAlarm)
-                }
+            }else{
+                hour = picker.hour
+                state = "AM"
+
             }
+
             calendar = Calendar.getInstance()
             calendar[Calendar.HOUR_OF_DAY] = picker.hour
             calendar[Calendar.MINUTE] = picker.minute
             calendar[Calendar.SECOND] = 0
             calendar[Calendar.MILLISECOND] = 0
+
+            if (alarm != null){
+                alarm.hour = hour
+                alarm.minute = picker.minute
+                alarm.state = state
+                alarm.checked = false
+                alarm.timeInMillis = calendar.timeInMillis
+                viewModel.update(alarm)
+            }else {
+                val newAlarm = Alarm(hour = hour, minute = picker.minute, state = state, checked = false, timeInMillis = calendar.timeInMillis)
+                viewModel.insert(newAlarm)
+            }
+
 
         }
     }
@@ -159,7 +167,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater = menuInflater;
         inflater.inflate(R.menu.main_menu, menu);
-        return true;
+        return true
     }
 
     @RequiresApi(Build.VERSION_CODES.N)

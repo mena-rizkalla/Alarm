@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.example.alarmmanager.Dao.AlarmDao
 import com.example.alarmmanager.model.Alarm
 
-@Database(entities = [Alarm::class] , version = 1 , exportSchema = false)
+@Database(entities = [Alarm::class] , version = 2 , exportSchema = false)
 abstract class AlarmDatabase : RoomDatabase(){
     abstract val alarmDao : AlarmDao
     companion object{

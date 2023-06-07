@@ -35,7 +35,7 @@ class AlarmAdapter(private val context : Context, private val alarms : List<Alar
         holder.switch.setOnCheckedChangeListener { _, isChecked ->
             if (context is MainActivity){
                 if (isChecked){
-                    context.setAlarm()
+                    context.setAlarm(alarm)
                     holder.differenceTime.visibility = View.VISIBLE
                     holder.differenceTime.text = diffTime
                 }else{
