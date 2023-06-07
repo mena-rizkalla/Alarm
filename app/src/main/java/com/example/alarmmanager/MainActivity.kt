@@ -65,6 +65,7 @@ class MainActivity : AppCompatActivity() {
             PendingIntent.FLAG_IMMUTABLE)
 
         alarmManager.cancel(pendingIntent)
+
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -93,7 +94,16 @@ class MainActivity : AppCompatActivity() {
 
         val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
         val currentMinute = Calendar.getInstance().get(Calendar.MINUTE)
-        var hourDifference = if (alarm != null) alarm.hour - currentHour else picker.hour - currentHour
+        val timeInHour : Int = if (alarm != null){
+            if (alarm.state == "PM"){
+                alarm.hour + 12
+            }else{
+                alarm.hour
+            }
+        }else{
+            picker.hour
+        }
+        var hourDifference = timeInHour - currentHour
         if (hourDifference < 0) {
             hourDifference += 24
         }
@@ -101,11 +111,15 @@ class MainActivity : AppCompatActivity() {
         var minuteDifference = if (alarm != null) alarm.minute - currentMinute else picker.minute - currentMinute
         if (minuteDifference < 0) {
             minuteDifference += 60
+            hourDifference -=1
         }
         val timeDifference = "Ring in $hourDifference h $minuteDifference minutes"
         Toast.makeText(this,timeDifference,Toast.LENGTH_SHORT).show()
-        adapter.diffTime = timeDifference
 
+        if (alarm != null){
+            alarm.checked = true
+            viewModel.update(alarm)
+        }
 
     }
 
@@ -138,6 +152,7 @@ class MainActivity : AppCompatActivity() {
             calendar[Calendar.MINUTE] = picker.minute
             calendar[Calendar.SECOND] = 0
             calendar[Calendar.MILLISECOND] = 0
+
 
             if (alarm != null){
                 alarm.hour = hour
