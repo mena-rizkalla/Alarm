@@ -53,10 +53,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-//        binding.selectedTime.setOnClickListener {
-//            showTimePicker()
-//        }
-
     }
 
      fun cancelAlarm() {
@@ -81,12 +77,7 @@ class MainActivity : AppCompatActivity() {
             intent,
             PendingIntent.FLAG_IMMUTABLE)
 
-        var timeMillis : Long
-        if (alarm != null){
-            timeMillis = alarm.timeInMillis
-        }else{
-            timeMillis = calendar.timeInMillis
-        }
+        val timeMillis : Long = alarm?.timeInMillis ?: calendar.timeInMillis
 
         alarmManager.set(
             AlarmManager.RTC_WAKEUP,timeMillis,
@@ -159,8 +150,6 @@ class MainActivity : AppCompatActivity() {
                 val newAlarm = Alarm(hour = hour, minute = picker.minute, state = state, checked = false, timeInMillis = calendar.timeInMillis)
                 viewModel.insert(newAlarm)
             }
-
-
         }
     }
 
