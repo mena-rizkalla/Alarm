@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-     fun cancelAlarm() {
+     fun cancelAlarm(alarm: Alarm?) {
         alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
         val intent = Intent(this , AlarmReceiver::class.java)
 
@@ -65,6 +65,10 @@ class MainActivity : AppCompatActivity() {
             PendingIntent.FLAG_IMMUTABLE)
 
         alarmManager.cancel(pendingIntent)
+         if (alarm != null){
+             alarm.checked = false
+             viewModel.update(alarm)
+         }
 
     }
 

@@ -28,7 +28,10 @@ class AlarmAdapter(private val context : Context, private val alarms : List<Alar
         holder.hour.text = "${alarm.hour} : ${alarm.minute} ${alarm.state}"
         if (alarm.checked) {
             holder.switch.isChecked = true
+            holder.differenceTime.visibility = View.VISIBLE
             holder.differenceTime.text = getDifferenceTime(alarm)
+        }else{
+            holder.switch.isChecked = false
         }
         holder.hour.setOnClickListener {
             if (context is MainActivity){
@@ -43,17 +46,19 @@ class AlarmAdapter(private val context : Context, private val alarms : List<Alar
                     holder.differenceTime.visibility = View.VISIBLE
                     holder.differenceTime.text = getDifferenceTime(alarm)
                 }else{
-                    context.cancelAlarm()
+                    context.cancelAlarm(alarm)
                     holder.differenceTime.visibility = View.INVISIBLE
                 }
             }
 
         }
-        if (position % alarms.size == 0){
+
+
+        if (position % 3 == 0){
             holder.alarmCardView.setCardBackgroundColor(ContextCompat.getColor(context,R.color.firstColor))
-        }else if (position % alarms.size == 1){
+        }else if (position % 3 == 1){
             holder.alarmCardView.setCardBackgroundColor(ContextCompat.getColor(context,R.color.secondColor))
-        }else if (position % alarms.size == 2){
+        }else if (position % 3 == 2){
             holder.alarmCardView.setCardBackgroundColor(ContextCompat.getColor(context,R.color.thirdColor))
         }else{
             holder.alarmCardView.setCardBackgroundColor(ContextCompat.getColor(context,R.color.fourthColor))
