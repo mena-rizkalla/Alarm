@@ -82,7 +82,12 @@ class MainActivity : AppCompatActivity() {
             intent,
             PendingIntent.FLAG_IMMUTABLE)
 
-        val timeMillis : Long = alarm?.timeInMillis ?: calendar.timeInMillis
+        var timeMillis : Long = alarm?.timeInMillis ?: calendar.timeInMillis
+
+        if (timeMillis < System.currentTimeMillis()) {
+            timeMillis += 86400000L // add 24 hours in milliseconds
+        }
+
 
         alarmManager.set(
             AlarmManager.RTC_WAKEUP,timeMillis,
