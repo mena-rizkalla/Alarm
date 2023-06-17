@@ -162,7 +162,6 @@ class MainActivity : AppCompatActivity() {
             calendar[Calendar.SECOND] = 0
             calendar[Calendar.MILLISECOND] = 0
 
-
             if (alarm != null){
                 alarm.hour = hour
                 alarm.minute = picker.minute
@@ -188,7 +187,6 @@ class MainActivity : AppCompatActivity() {
         when(item.itemId){
             R.id.insertBtnMenu -> {
                 showTimePicker()
-
             }
         }
         return super.onOptionsItemSelected(item)

@@ -30,6 +30,7 @@
         </activity>
 
         <receiver android:name=".service.AlarmReceiver" />
+        <receiver android:name=".service.MediaNotificationReceiver"/>
     </application>
 
 </manifest>
