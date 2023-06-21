@@ -2,7 +2,6 @@ package com.example.alarmmanager
 
 import android.app.AlarmManager
 import android.app.PendingIntent
-import android.content.AbstractThreadedSyncAdapter
 import android.content.Intent
 import android.icu.util.Calendar
 import android.os.Build
@@ -15,7 +14,6 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.alarmmanager.adapter.AlarmAdapter
 import com.example.alarmmanager.database.AlarmDatabase
 import com.example.alarmmanager.databinding.ActivityMainBinding
