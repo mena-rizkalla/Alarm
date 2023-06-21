@@ -1,4 +1,3 @@
-# Alarm app
 <h1> Kotlin Alarm App </h1>
 This is an Android app that allows users to set alarms using Room, Kotlin Coroutine, Alarm Manager, and View Binding.
 
