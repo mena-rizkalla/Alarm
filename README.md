@@ -1,11 +1,12 @@
 <h1> Kotlin Alarm App </h1>
-This is an Android app that allows users to set alarms using Room, Kotlin Coroutine, Alarm Manager, and View Binding.
+This is an Android app that allows users to set alarms using Room, Kotlin Coroutine, Alarm Manager, View Binding and MVVM architecture.
 
 ## Features
 
 - Set alarms with a specific time and date
 - Edit and delete existing alarms
 - Receive notifications when an alarm goes off
+-  dismiss alarms from the notification
 
 ## Technologies Used
 
@@ -13,6 +14,7 @@ This is an Android app that allows users to set alarms using Room, Kotlin Corout
 - Coroutine: A concurrency design pattern that allows for asynchronous programming in a more readable and maintainable way.
 - [Alarm Manager](https://developer.android.com/reference/kotlin/android/app/AlarmManager): A system service that allows you to schedule your application to be run at some point in the future.
 - View Binding: A feature that allows you to more easily write code that interacts with views.
+- MVVM Architecture: A design pattern that separates the user interface from the business logic and data access layers.
 
 ## Screenshots
 
