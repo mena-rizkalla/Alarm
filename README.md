@@ -14,7 +14,7 @@ This is an Android app that allows users to set alarms using Room, Kotlin Corout
 - [Alarm Manager](https://developer.android.com/reference/kotlin/android/app/AlarmManager): A system service that allows you to schedule your application to be run at some point in the future.
 - View Binding: A feature that allows you to more easily write code that interacts with views.
 
-
+<h2>Images :<h2/>
 - <table align="center">
   <tr>
     <td> 
