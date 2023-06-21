@@ -1,8 +1,10 @@
 package com.example.alarmmanager.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.icu.util.Calendar
 import android.os.Build
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,16 +24,33 @@ class AlarmAdapter(private val context : Context, private val alarms : List<Alar
         return ViewHolder(binding)
     }
 
+    @SuppressLint("SetTextI18n")
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-       val alarm = alarms[position]
+        val handler = Handler()
+        var runnable: Runnable? = null
+        val alarm = alarms[position]
         holder.hour.text = "${alarm.hour} : ${alarm.minute} ${alarm.state}"
         if (alarm.checked) {
             holder.switch.isChecked = true
             holder.differenceTime.visibility = View.VISIBLE
-            holder.differenceTime.text = getDifferenceTime(alarm)
+            // Create a runnable
+            // Create a runnable
+             runnable = object : Runnable {
+                override fun run() {
+                    // Update the TextView with the current time difference
+                    holder.differenceTime.text = getDifferenceTime(alarm)
+
+                    // Post the runnable again with a one minute delay
+                    handler.postDelayed(this, 60000)
+                }
+            }
+            // Start the runnable with an initial delay
+            // Start the runnable with an initial delay
+            handler.postDelayed(runnable, 0)
         }else{
             holder.switch.isChecked = false
+
         }
         holder.hour.setOnClickListener {
             if (context is MainActivity){
@@ -48,6 +67,9 @@ class AlarmAdapter(private val context : Context, private val alarms : List<Alar
                 }else{
                     context.cancelAlarm(alarm)
                     holder.differenceTime.visibility = View.INVISIBLE
+                    if (runnable != null) {
+                        handler.removeCallbacks(runnable)
+                    }
                 }
             }
 
