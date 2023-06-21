@@ -13,6 +13,9 @@ import com.example.alarmmanager.MainActivity
 import com.example.alarmmanager.R
 import com.example.alarmmanager.databinding.AlarmItemBinding
 import com.example.alarmmanager.model.Alarm
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 class AlarmAdapter(private val context : Context, private val alarms : List<Alarm>) : RecyclerView.Adapter<AlarmAdapter.ViewHolder>() {
 
@@ -89,19 +92,23 @@ class AlarmAdapter(private val context : Context, private val alarms : List<Alar
 
         }
         val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
-        val currentMinute = Calendar.getInstance().get(Calendar.MINUTE)
         var hourDifference = timeInHour - currentHour
         if (hourDifference < 0) {
             hourDifference += 24
         }
 
+        val currentMinute = Calendar.getInstance().get(Calendar.MINUTE)
         var minuteDifference = alarm.minute - currentMinute
         if (minuteDifference < 0) {
             minuteDifference += 60
             hourDifference -=1
         }
+        if (hourDifference < 0) {
+            hourDifference += 24
+        }
         return "Ring in $hourDifference h $minuteDifference minutes"
     }
+
 
 
 }

@@ -122,6 +122,10 @@ class MainActivity : AppCompatActivity() {
             minuteDifference += 60
             hourDifference -=1
         }
+        if (hourDifference < 0) {
+            hourDifference += 24
+        }
+
         val timeDifference = "Ring in $hourDifference h $minuteDifference minutes"
         Toast.makeText(this,timeDifference,Toast.LENGTH_SHORT).show()
 
